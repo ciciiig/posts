@@ -1,7 +1,7 @@
 import { getShouldSearch } from './utils/getShouldSearch.js';
-import { shortenText } from './utils/shortenText.js';
 import { setInputPlaceholder } from './utils/setInputPlaceholder.js';
 import { fetchPosts } from './utils/fetchPosts.js';
+import { createPostCard } from './utils/createPostCard.js';
 import config from './config.json' assert { type: 'json' };
 
 const appState = {
@@ -75,31 +75,11 @@ function showPosts(userPosts) {
 
     for (let i = 0; i < appState.config.maxPostsPerPage; i += 1) {
         if (userPosts[i]) {
-            const postDiv = document.createElement('div')
-            const usernameDiv = document.createElement('div')
-            const titleDiv = document.createElement('div')
-            const bodyDiv = document.createElement('div')
-
-            postDiv.className = 'post';
-
-            usernameDiv.textContent = userPosts[i].id;
-
-            titleDiv.textContent = shortenText(userPosts[i].title);
-
-            bodyDiv.className = 'post-body';
-            bodyDiv.textContent = userPosts[i].body;
-
-            postDiv.appendChild(usernameDiv);
-            postDiv.appendChild(titleDiv);
-            postDiv.appendChild(bodyDiv);
-
-            elements.postsContainer.appendChild(postDiv);
+            const { id, title, body } = userPosts[i];
+            const postCard = createPostCard({ id, title, body });
+            elements.postsContainer.appendChild(postCard);
         }
     }
 }
-
-// function createPostCard ({username, title, body}) {
-
-// }
 
 initializePage()
