@@ -1,0 +1,63 @@
+.container {
+    box-sizing: border-box;
+    border: 1px dashed black;
+    height: 90vh;
+    width: 90vw;
+    margin: 30px auto;
+    padding: 30px;
+}
+
+.search-input {
+    border: 2px solid black;
+    height: 40px;
+    padding: 15px;
+}
+
+.posts_container {
+    display: flex;
+    justify-content: start;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    border: 2px solid black;
+    height: 80%;
+    margin: 10px 0;
+    padding: 15px;
+}
+
+.post {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid black;
+    max-width: 120px;
+    height: 120px;
+    margin: 5px;
+    padding: 5px;
+}
+
+.post-body {
+    /* line-clamp needs all 4 lines bellow to show only 3 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.page-number_container {
+    text-align: center;
+}
+
+.page-number {
+    margin: 10px;
+    pointer-events: none;
+}
+
+.arrow {
+    background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
