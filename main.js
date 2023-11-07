@@ -21,11 +21,6 @@ const elements = {
     rightArrow: document.getElementById('right-arrow'),
     searchInput: document.getElementById('search-input'),
     postsContainer: document.getElementById('posts_container'),
-    
-    postDiv: document.createElement('div'),
-    usernameDiv: document.createElement('div'),
-    titleDiv: document.createElement('div'),
-    bodyDiv: document.createElement('div'),
 }
 
 async function initializePage() {
