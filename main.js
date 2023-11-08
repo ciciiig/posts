@@ -122,7 +122,7 @@ function showPosts(posts) {
     for (let i = 0; i < appState.config.maxPostsPerPage; i += 1) {
         if (posts[i]) {
             const { id, title, body } = posts[i];
-            const postCard = createPostCard({ id, title, body });
+            const postCard = createPostCard({ id, title, body, appState });
             elements.postsContainer.appendChild(postCard);
         }
     }
