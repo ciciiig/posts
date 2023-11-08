@@ -41,6 +41,9 @@ function addAndRemoveListeners() {
 }
 
 function loadPosts() {
+    if (appState.currentPage === 1) {
+        elements.leftArrow.setAttribute("disabled", "")
+    }
     if (getShouldSearch(elements.searchInput.value)) {
         appState.currentPage = 1;
         document.getElementById('page-number').innerHTML = appState.currentPage;
@@ -59,6 +62,9 @@ function loadPosts() {
 }
 
 function loadPreviousPage() {
+    if (appState.currentPage === 2) {
+        elements.leftArrow.setAttribute("disabled", "")
+    }
     if (appState.searchValue) {
         if (appState.currentPage > 1) {
             appState.currentPage -= 1;
@@ -67,11 +73,9 @@ function loadPreviousPage() {
             const postsForPage = appState.currentPost.slice(startIndex, endIndex);
             document.getElementById('page-number').innerHTML = appState.currentPage;
             showPosts(postsForPage);
-
         }
-
     } else {
-        appState.maxPages = 10
+        appState.maxPages = 10;
         if (appState.currentPage > 1) {
             appState.currentPage -= 1;
             document.getElementById('page-number').innerHTML = appState.currentPage;
@@ -83,6 +87,7 @@ function loadPreviousPage() {
 }
 
 function loadNextPage() {
+    elements.leftArrow.removeAttribute("disabled")
     if (appState.searchValue) {
         appState.maxPages = appState.totalPages
         const currentLength = appState.currentPost.length;

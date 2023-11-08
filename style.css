@@ -61,3 +61,8 @@
 	cursor: pointer;
 	outline: inherit;
 }
+
+.arrow:disabled {
+    color: rgba(150, 150, 150, 0.5);
+    pointer-events: none;
+}
