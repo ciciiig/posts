@@ -1,8 +1,11 @@
-export async function fetchPosts(url) {
+export async function fetchPosts(appState) {
     try {
-        const response = await fetch(url);
+        appState.isFetching = true;
+        const response = await fetch(appState.urlPosts);
+        appState.isFetching = false;
         return await response.json();
     } catch (error) {
-        console.error(error);
+        appState.isFetching = false;
+        appState.error = error
     }
 }
