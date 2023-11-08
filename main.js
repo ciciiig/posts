@@ -8,8 +8,8 @@ const appState = {
     urlPosts: 'https://jsonplaceholder.typicode.com/posts',
     posts: [],
     currentPost: [],
-    searchValue: '',
     currentPage: 1,
+    // searchValue: '',
     // maxPages: 10,
     // totalPages: 0,
 
@@ -31,30 +31,28 @@ async function initializePage() {
 }
 
 function addAndRemoveListeners() {
-    elements.leftArrow.removeEventListener('click', changePageLeft);
-    elements.rightArrow.removeEventListener('click', changePageRight);
+    elements.leftArrow.removeEventListener('click', loadPreviousPage);
+    elements.rightArrow.removeEventListener('click', loadNextPage);
     elements.searchInput.removeEventListener('input', loadPosts);
 
-    elements.leftArrow.addEventListener('click', changePageLeft);
-    elements.rightArrow.addEventListener('click', changePageRight);
+    elements.leftArrow.addEventListener('click', loadPreviousPage);
+    elements.rightArrow.addEventListener('click', loadNextPage);
     elements.searchInput.addEventListener('input', loadPosts);
 }
 
 function loadPosts() {
     if (getShouldSearch(elements.searchInput.value)) {
-        // load posts by search input value
         appState.currentPost = appState.posts.filter((post) => {
             return (post.title.includes(getShouldSearch(elements.searchInput.value)) || (post.body.includes(getShouldSearch(elements.searchInput.value))))
         })
         return showPosts(appState.currentPost);
     } else {
-        //load posts by page number
         appState.currentPost = appState.posts.filter((post) => post.userId === appState.currentPage)
         return showPosts(appState.currentPost);
     }
 }
 
-function changePageLeft() {
+function loadPreviousPage() {
     if (appState.currentPage > 1) {
         appState.currentPage -= 1;
         document.getElementById('page-number').innerHTML = appState.currentPage;
@@ -62,7 +60,7 @@ function changePageLeft() {
     }
 }
 
-function changePageRight() {
+function loadNextPage() {
     if (appState.currentPage < 10) {
         appState.currentPage += 1;
         document.getElementById('page-number').innerHTML = appState.currentPage;
