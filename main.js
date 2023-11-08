@@ -42,7 +42,7 @@ function addAndRemoveListeners() {
 
 function loadPosts() {
     if (appState.currentPage === 1) {
-        elements.leftArrow.setAttribute("disabled", "")
+        elements.leftArrow.setAttribute("disabled", "");
     }
     if (getShouldSearch(elements.searchInput.value)) {
         appState.currentPage = 1;
@@ -62,6 +62,7 @@ function loadPosts() {
 }
 
 function loadPreviousPage() {
+    elements.rightArrow.removeAttribute("disabled")
     if (appState.currentPage === 2) {
         elements.leftArrow.setAttribute("disabled", "")
     }
@@ -88,6 +89,9 @@ function loadPreviousPage() {
 
 function loadNextPage() {
     elements.leftArrow.removeAttribute("disabled")
+    if (appState.currentPage === appState.totalPages - 1) {
+        elements.rightArrow.setAttribute("disabled", "")
+    }
     if (appState.searchValue) {
         appState.maxPages = appState.totalPages
         const currentLength = appState.currentPost.length;
