@@ -66,3 +66,19 @@
     color: rgba(150, 150, 150, 0.5);
     pointer-events: none;
 }
+
+.button-reload-the-page {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    font-size: 32px;
+    text-decoration: underline;
+}
+
+.button-reload-the-page:hover {
+    transform: scale(1.1) translate(8px, -1px);
+}
