@@ -1,4 +1,3 @@
-// open modal by id
 export function createPostModal(post, id) {
         const postsContainer = document.getElementById('posts_container')
         const modalContainerDiv = document.createElement('div');

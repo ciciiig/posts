@@ -71,13 +71,26 @@ function handeClickRightArrow() {
     render();
 }
 
+function addCloseModalListener() {
+    document.addEventListener('click', event => {
+        if (event.target.classList.contains('jw-modal')) {
+            closeModal();
+        }
+    });
+}
+function closeModal() {
+    document.querySelector('.jw-modal.open').classList.remove('open');
+    document.body.classList.remove('jw-modal-open');
+}
+
+
 function renderPosts() {
     const { currentPost } = appState
     elements.postsContainer.innerHTML = '';
     for (let i = 0; i < appState.config.maxPostsPerPage; i += 1) {
         if (currentPost[i]) {
             const { id, title, body } = currentPost[i];
-            const postCard = createPostCard({ id, title, body });
+            const postCard = createPostCard({ id, title, body, appState });
             elements.postsContainer.appendChild(postCard);
         }
     }
@@ -147,6 +160,7 @@ async function initializePage() {
 
     // set listeners
     addAndRemoveListeners();
+    addCloseModalListener();
 }
 
 // RUN APP

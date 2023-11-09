@@ -1,5 +1,5 @@
 import { shortenText } from './shortenText.js';
-import { createPostModal } from './postModal.js';
+import { createPostModal } from './createPostModal.js';
 
 export function createPostCard({ id, title, body, appState }) {
     const postDiv = document.createElement('div');
