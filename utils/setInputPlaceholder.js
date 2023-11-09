@@ -1,3 +1,3 @@
-export function setInputPlaceholder(searchInput, searchInputPlaceholder) {
-    searchInput.setAttribute('placeholder', searchInputPlaceholder);
+export function setInputPlaceholder(inputElement, inputPlaceholder) {
+    inputElement.placeholder = inputPlaceholder;
 }
