@@ -7,7 +7,8 @@ export function createPostCard({ id, title, body }) {
     const bodyDiv = document.createElement('div');
 
     postDiv.className = 'post';
-    postDiv.id = id;
+    postDiv.id = `post-card-${id}`;
+    postDiv.setAttribute('name', 'post-card');
     idDiv.textContent = id;
     titleDiv.textContent = shortenText(title);
     bodyDiv.className = 'post-body';

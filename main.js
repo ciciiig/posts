@@ -4,6 +4,7 @@ import { createPostCard } from './utils/createPostCard.js';
 import config from './config.json' assert { type: 'json' };
 import { getCurrentPostsState } from './utils/getCurrentPostsState.js';
 import { addScreenLoader, createScreenLoader, removeScreenLoader } from './utils/screenLoader.js';
+import { createPostModal } from './utils/createPostModal.js';
 
 // APP STATE
 const appState = {
@@ -11,7 +12,7 @@ const appState = {
     isFetching: false,
     error: '',
     posts: [],
-    currentPost: [],
+    currentPosts: [],
     currentPage: 1,
     totalPages: 10,
     maxPages: 10,
@@ -41,11 +42,11 @@ const elements = {
 
 function setAppState() {
     const { posts, currentPage, maxPostsPerPage, searchValue} = appState;
-    const { maxPages, currentPost } = getCurrentPostsState({
+    const { maxPages, currentPosts } = getCurrentPostsState({
         posts, currentPage, maxPostsPerPage, searchValue
     });
     appState.maxPages = maxPages;
-    appState.currentPost = currentPost;
+    appState.currentPosts = currentPosts;
     appState.postNavigation.isPrevButtonDisable = currentPage <= 1;
     appState.postNavigation.isNextButtonDisable = currentPage >= maxPages;
     elements.leftArrow.disabled = appState.postNavigation.isPrevButtonDisable;
@@ -77,12 +78,25 @@ function handeClickPostsNavigation(clickEvent) {
     render();
 }
 
+function handleClickPosts(clickEvent) {
+    const postCard = clickEvent.target.closest('[name="post-card"]');
+    if (postCard) {
+        const [, postIndex] = postCard.id.split('post-card-');
+        const originalPost = appState.currentPosts.find((currentPost) => currentPost.id === +postIndex);
+        appState.modalWindow.isOpen = true;
+        appState.modalWindow.originalPost = { ...originalPost }; // better to use deepClone function
+        appState.modalWindow.editedPost = { ...originalPost }; // better to use deepClone function
+    }
+
+    render({ doesRenderModalWindowOnly: true });
+}
+
 function renderPosts() {
-    const { currentPost } = appState
+    const { currentPosts } = appState
     elements.postsContainer.innerHTML = '';
     for (let i = 0; i < appState.config.maxPostsPerPage; i += 1) {
-        if (currentPost[i]) {
-            const { id, title, body } = currentPost[i];
+        if (currentPosts[i]) {
+            const { id, title, body } = currentPosts[i];
             const postCard = createPostCard({ id, title, body });
             elements.postsContainer.appendChild(postCard);
         }
@@ -93,7 +107,17 @@ function renderPostNavigation() {
     elements.rightArrow.disabled = appState.postNavigation.isNextButtonDisable;
     elements.pageNumber.innerText = appState.currentPage;
 }
-function render() {
+function renderModalWindow() {
+    const modalWindowElement = createPostModal(appState.modalWindow.editedPost);
+
+    elements.appContainer.appendChild(modalWindowElement);
+}
+function render({ doesRenderModalWindowOnly } = { doesRenderModalWindowOnly: false }) {
+    if (doesRenderModalWindowOnly && appState.modalWindow.isOpen) {
+        renderModalWindow();
+        return;
+    }
+
     renderPosts();
     renderPostNavigation();
 }
@@ -101,9 +125,11 @@ function render() {
 function addAndRemoveListeners() {
     elements.postNavigationContainer.removeEventListener('click', handeClickPostsNavigation);
     elements.searchInput.removeEventListener('input', handeInputSearchInput);
+    elements.postsContainer.removeEventListener('click', handleClickPosts);
 
     elements.postNavigationContainer.addEventListener('click', handeClickPostsNavigation);
     elements.searchInput.addEventListener('input', handeInputSearchInput);
+    elements.postsContainer.addEventListener('click', handleClickPosts, { capture: true });
 }
 
 async function initializePage() {
