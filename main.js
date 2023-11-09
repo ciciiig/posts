@@ -27,6 +27,7 @@ async function initializePage() {
     setInputPlaceholder(elements.searchInput, appState.config.searchInputPlaceholder);
     appState.posts = await fetchPosts(appState.urlPosts);
     addAndRemoveListeners();
+    addCloseModalListener();
     loadPosts();
 }
 
@@ -38,6 +39,19 @@ function addAndRemoveListeners() {
     elements.leftArrow.addEventListener('click', loadPreviousPage);
     elements.rightArrow.addEventListener('click', loadNextPage);
     elements.searchInput.addEventListener('input', loadPosts);
+}
+
+function addCloseModalListener() {
+    document.addEventListener('click', event => {
+        if (event.target.classList.contains('jw-modal')) {
+            closeModal();
+        }
+    });
+}
+
+function closeModal() {
+    document.querySelector('.jw-modal.open').classList.remove('open');
+    document.body.classList.remove('jw-modal-open');
 }
 
 function loadPosts() {
