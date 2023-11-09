@@ -1,7 +1,6 @@
 import { shortenText } from './shortenText.js';
-import { createPostModal } from './createPostModal.js';
 
-export function createPostCard({ id, title, body, appState }) {
+export function createPostCard({ id, title, body }) {
     const postDiv = document.createElement('div');
     const idDiv = document.createElement('div');
     const titleDiv = document.createElement('div');
@@ -14,22 +13,9 @@ export function createPostCard({ id, title, body, appState }) {
     bodyDiv.className = 'post-body';
     bodyDiv.textContent = body;
 
-    postDiv.addEventListener('click', (event) => {
-        getClickedPost(event, appState);
-    });
-
     postDiv.appendChild(idDiv);
     postDiv.appendChild(titleDiv);
     postDiv.appendChild(bodyDiv);
 
     return postDiv;
-}
-
-function getClickedPost(event, appState) {
-    const postDiv = event.target.closest('.post');
-    const id = postDiv.id;
-
-    const post = appState.posts.find((p) => p.id === +id);
-
-    createPostModal(post, id);
 }

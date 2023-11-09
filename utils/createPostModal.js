@@ -1,4 +1,4 @@
-export function createPostModal(post, id) {
+export function createPostModal(post) {
         const postsContainer = document.getElementById('posts_container')
         const modalContainerDiv = document.createElement('div');
         const modalDiv = document.createElement('div');
@@ -9,7 +9,7 @@ export function createPostModal(post, id) {
         modalContainerDiv.id = "modal-1";
         modalContainerDiv.className = "jw-modal";
         modalDiv.className = "jw-modal-body";
-        idDiv.textContent = id;
+        idDiv.textContent = post.id;
         titleDiv.textContent = post.title;
         bodyDiv.textContent = post.body;
 
