@@ -31,6 +31,7 @@ const appState = {
 
 const elements = {
     appContainer: document.getElementById('app-container'),
+    postNavigationContainer: document.getElementById('post-navigation-container'),
     leftArrow: document.getElementById('left-arrow'),
     rightArrow: document.getElementById('right-arrow'),
     pageNumber: document.getElementById('page-number'),
@@ -63,14 +64,14 @@ function handeInputSearchInput() {
     setAppState();
     render();
 }
-function handeClickLeftArrow() {
-    appState.currentPage -= 1;
 
-    setAppState();
-    render();
-}
-function handeClickRightArrow() {
-    appState.currentPage += 1;
+function handeClickPostsNavigation(clickEvent) {
+    if (clickEvent.target.id === 'left-arrow') {
+        appState.currentPage -= 1;
+    }
+    if (clickEvent.target.id === 'right-arrow') {
+        appState.currentPage += 1;
+    }
 
     setAppState();
     render();
@@ -89,7 +90,7 @@ function renderPosts() {
 }
 function renderPostNavigation() {
     elements.leftArrow.disabled = appState.postNavigation.isPrevButtonDisable;
-    elements.leftArrow.rightArrow = appState.postNavigation.isNextButtonDisable;
+    elements.rightArrow.disabled = appState.postNavigation.isNextButtonDisable;
     elements.pageNumber.innerText = appState.currentPage;
 }
 function render() {
@@ -98,12 +99,10 @@ function render() {
 }
 
 function addAndRemoveListeners() {
-    elements.leftArrow.removeEventListener('click', handeClickLeftArrow);
-    elements.rightArrow.removeEventListener('click', handeClickRightArrow);
+    elements.postNavigationContainer.removeEventListener('click', handeClickPostsNavigation);
     elements.searchInput.removeEventListener('input', handeInputSearchInput);
 
-    elements.leftArrow.addEventListener('click', handeClickLeftArrow);
-    elements.rightArrow.addEventListener('click', handeClickRightArrow);
+    elements.postNavigationContainer.addEventListener('click', handeClickPostsNavigation);
     elements.searchInput.addEventListener('input', handeInputSearchInput);
 }
 
