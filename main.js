@@ -1,5 +1,5 @@
 import { setInputPlaceholder } from './utils/setInputPlaceholder.js';
-import { fetchPosts } from './utils/fetchPosts.js';
+import { fetchPosts, patchPost } from './utils/fetchPosts.js';
 import { createPostCard } from './utils/createPostCard.js';
 import config from './config.json' assert { type: 'json' };
 import { getCurrentPostsState } from './utils/getCurrentPostsState.js';
@@ -122,6 +122,9 @@ function renderPostNavigation() {
 function renderModalWindow() {
     const modalWindowElement = createPostModal(appState.modalWindow.editedPost);
 
+    const confirmBtn = modalWindowElement.querySelector('#modal-window-acton-buttons-container__confirm-button');
+    confirmBtn.addEventListener('click', onConfirm);
+
     elements.appContainer.appendChild(modalWindowElement);
 }
 function render({ doesRenderModalWindowOnly } = { doesRenderModalWindowOnly: false }) {
@@ -132,6 +135,20 @@ function render({ doesRenderModalWindowOnly } = { doesRenderModalWindowOnly: fal
 
     renderPosts();
     renderPostNavigation();
+}
+
+async function onConfirm () {
+    const textareaEditedValue = document.getElementById('modal-window-edited-post__edited-text').value;
+    appState.modalWindow.editedPost.body = textareaEditedValue;
+
+    let patchResult = await patchPost(appState)
+    
+    const originalPost = appState.posts.find((post) => post.id === appState.modalWindow.editedPost.id);
+    if (!appState.error) {
+        originalPost.body = patchResult.body
+    } else {
+        originalPost.body = appState.modalWindow.originalPost.body
+    }
 }
 
 function addAndRemoveListeners() {
