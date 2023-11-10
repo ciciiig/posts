@@ -3,6 +3,7 @@ import { capitalizeFirstLetter } from "./capitalizeFirstLetter.js";
 export function createPostModal(post) {
         const modalWindowContainer = document.createElement('div');
         modalWindowContainer.className = 'modal-back';
+        modalWindowContainer.id = 'modal-back';
 
         modalWindowContainer.innerHTML = `
                 <div class="modal-window" id="modal-window">

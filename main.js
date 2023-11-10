@@ -41,7 +41,7 @@ const elements = {
 }
 
 function setAppState() {
-    const { posts, currentPage, maxPostsPerPage, searchValue} = appState;
+    const { posts, currentPage, maxPostsPerPage, searchValue } = appState;
     const { maxPages, currentPosts } = getCurrentPostsState({
         posts, currentPage, maxPostsPerPage, searchValue
     });
@@ -86,9 +86,21 @@ function handleClickPosts(clickEvent) {
         appState.modalWindow.isOpen = true;
         appState.modalWindow.originalPost = { ...originalPost }; // better to use deepClone function
         appState.modalWindow.editedPost = { ...originalPost }; // better to use deepClone function
-    }
 
-    render({ doesRenderModalWindowOnly: true });
+        render({ doesRenderModalWindowOnly: true });
+
+        document.addEventListener('click', closeModalWindow, { capture: true })
+    }
+}
+
+function closeModalWindow() {
+    const modalWindow = event.target.closest('#modal-window');
+    if (!modalWindow) {
+        appState.modalWindow.isOpen = false;
+        render({ doesRenderModalWindowOnly: false });
+        document.getElementById('modal-back').remove();
+        document.removeEventListener('click', closeModalWindow, { capture: true })
+    }
 }
 
 function renderPosts() {
