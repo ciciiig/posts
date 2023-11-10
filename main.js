@@ -122,6 +122,11 @@ function renderPostNavigation() {
 function renderModalWindow() {
     const modalWindowElement = createPostModal(appState.modalWindow.editedPost);
 
+    // TODO: not closing modal window
+    const closeBtn = modalWindowElement.querySelector('#modal-window-header__close-button');
+    closeBtn.removeEventListener('click', closeModalWindow);
+    closeBtn.addEventListener('click', closeModalWindow);
+
     elements.appContainer.appendChild(modalWindowElement);
 }
 function render({ doesRenderModalWindowOnly } = { doesRenderModalWindowOnly: false }) {
