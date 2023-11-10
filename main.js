@@ -95,7 +95,7 @@ function handleClickPosts(clickEvent) {
 
 function closeModalWindow() {
     const modalWindow = event.target.closest('#modal-window');
-    if (!modalWindow) {
+    if (!modalWindow || appState.modalWindow.isOpen) {
         appState.modalWindow.isOpen = false;
         render({ doesRenderModalWindowOnly: false });
         document.getElementById('modal-back').remove();
@@ -121,6 +121,10 @@ function renderPostNavigation() {
 }
 function renderModalWindow() {
     const modalWindowElement = createPostModal(appState.modalWindow.editedPost);
+
+    const closeBtn = modalWindowElement.querySelector('#modal-window-header__close-button');
+    closeBtn.removeEventListener('click', closeModalWindow);
+    closeBtn.addEventListener('click', closeModalWindow);
 
     elements.appContainer.appendChild(modalWindowElement);
 }
