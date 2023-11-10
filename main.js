@@ -93,9 +93,9 @@ function handleClickPosts(clickEvent) {
     }
 }
 
-function closeModalWindow() {
-    const modalWindow = event.target.closest('#modal-window');
-    if (!modalWindow || event.target.id === 'modal-window-header__close-button') {
+function closeModalWindow(Event) {
+    const modalWindow = Event.target.closest('#modal-window');
+    if (!modalWindow || Event.target.id === 'modal-window-header__close-button') {
         appState.modalWindow.isOpen = false;
         render({ doesRenderModalWindowOnly: false });
         document.getElementById('modal-back').remove();
@@ -121,10 +121,6 @@ function renderPostNavigation() {
 }
 function renderModalWindow() {
     const modalWindowElement = createPostModal(appState.modalWindow.editedPost);
-
-    const closeBtn = modalWindowElement.querySelector('#modal-window-header__close-button');
-    closeBtn.removeEventListener('click', closeModalWindow);
-    closeBtn.addEventListener('click', closeModalWindow);
 
     elements.appContainer.appendChild(modalWindowElement);
 }
