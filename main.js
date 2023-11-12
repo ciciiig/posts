@@ -106,7 +106,7 @@ function handleClickModalWindow(event) {
         closeModalWindow();
     }
 
-    if(event.target.id === 'modal-window-acton-buttons-container__confirm-button') {
+    if (event.target.id === 'modal-window-acton-buttons-container__confirm-button') {
         onConfirm();
     }
 }
@@ -163,12 +163,36 @@ async function onConfirm() {
     updatePostBody(appState.modalWindow.editedPost.body);
     render();
 
+    flickerAlertWindow(updatePostBody);
     await patchPost(appState);
+}
 
-    if (appState.postUpdate.error) {
-        updatePostBody(appState.modalWindow.originalPost.body);
-        render();
-    }
+function flickerAlertWindow(updatePostBody) {
+    const alertWindow = document.createElement('div')
+    alertWindow.className = 'alert-container'
+    alertWindow.innerHTML = `
+        <div class="alert-message_updating">Post Updating...</div>
+    `
+    elements.appContainer.appendChild(alertWindow);
+
+    setTimeout(() => {
+        elements.appContainer.removeChild(alertWindow);
+        if (appState.postUpdate.error) {
+            alertWindow.innerHTML = `
+            <div class="alert-message_error">${appState.postUpdate.error}</div>
+            `
+            elements.appContainer.appendChild(alertWindow);
+            updatePostBody(appState.modalWindow.originalPost.body);
+            render();
+        }
+
+        setTimeout(() => {
+            if (elements.appContainer.contains(alertWindow)) {
+                elements.appContainer.removeChild(alertWindow);
+                render();
+            }
+        }, 5000);
+    }, 5000);
 }
 
 function addAndRemoveListeners() {
