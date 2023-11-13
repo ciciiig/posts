@@ -33,6 +33,7 @@
     height: 120px;
     margin: 5px;
     padding: 5px;
+    width: 100%;
 }
 
 .post:hover {
@@ -102,4 +103,22 @@
     margin: 1em 0;
     display: flex;
     justify-content: center;
+}
+
+.alert-container {
+    position: absolute;
+    top: 15%;  
+    left: 50%; 
+    transform: translate(-50%, -50%);
+    background-color: rgb(228, 228, 228);
+}
+
+.alert-message_updating {
+    border: 2.5px dashed blue;
+    padding: 10px;
+}
+
+.alert-message_error {
+    border: 2.5px solid red;
+    padding: 10px;
 }

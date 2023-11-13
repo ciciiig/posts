@@ -1,5 +1,5 @@
 import { setInputPlaceholder } from './utils/setInputPlaceholder.js';
-import { fetchPosts } from './utils/fetchPosts.js';
+import { fetchPosts, patchPost } from './services/post.js';
 import { createPostCard } from './utils/createPostCard.js';
 import config from './config.json' assert { type: 'json' };
 import { getCurrentPostsState } from './utils/getCurrentPostsState.js';
@@ -11,6 +11,10 @@ const appState = {
     urlPosts: 'https://jsonplaceholder.typicode.com/posts',
     isFetching: false,
     error: '',
+    postUpdate: {
+        isFetching: false,
+        error: '',
+    },
     posts: [],
     currentPosts: [],
     currentPage: 1,
@@ -38,10 +42,12 @@ const elements = {
     pageNumber: document.getElementById('page-number'),
     searchInput: document.getElementById('search-input'),
     postsContainer: document.getElementById('posts_container'),
+    modalWindow: null,
+    textareaEditedValue: null,
 }
 
 function setAppState() {
-    const { posts, currentPage, maxPostsPerPage, searchValue} = appState;
+    const { posts, currentPage, maxPostsPerPage, searchValue } = appState;
     const { maxPages, currentPosts } = getCurrentPostsState({
         posts, currentPage, maxPostsPerPage, searchValue
     });
@@ -86,9 +92,29 @@ function handleClickPosts(clickEvent) {
         appState.modalWindow.isOpen = true;
         appState.modalWindow.originalPost = { ...originalPost }; // better to use deepClone function
         appState.modalWindow.editedPost = { ...originalPost }; // better to use deepClone function
+
+        render();
+        addAndRemoveListeners();
+    }
+}
+
+function handleClickModalWindow(event) {
+    if (
+        event.target.id === 'modal-back'
+        || event.target.id === 'modal-window-header__close-button'
+    ) {
+        closeModalWindow();
     }
 
-    render({ doesRenderModalWindowOnly: true });
+    if (event.target.id === 'modal-window-acton-buttons-container__confirm-button') {
+        onConfirm();
+    }
+}
+
+function closeModalWindow() {
+    appState.modalWindow.isOpen = false;
+    render();
+    addAndRemoveListeners();
 }
 
 function renderPosts() {
@@ -112,24 +138,76 @@ function renderModalWindow() {
 
     elements.appContainer.appendChild(modalWindowElement);
 }
-function render({ doesRenderModalWindowOnly } = { doesRenderModalWindowOnly: false }) {
-    if (doesRenderModalWindowOnly && appState.modalWindow.isOpen) {
+function render() {
+    if (appState.modalWindow.isOpen) {
         renderModalWindow();
         return;
     }
 
+    elements.modalWindow && elements.modalWindow.remove();
     renderPosts();
     renderPostNavigation();
+}
+
+async function onConfirm() {
+    const updatePostBody = (body) => {
+        appState.posts.forEach((post) => {
+            if (post.id === appState.modalWindow.editedPost.id) {
+                post.body = body;
+            }
+        });
+    }
+
+    appState.modalWindow.editedPost.body = elements.textareaEditedValue && elements.textareaEditedValue.value;
+    appState.modalWindow.isOpen = false;
+    updatePostBody(appState.modalWindow.editedPost.body);
+    render();
+
+    flickerAlertWindow(updatePostBody);
+    await patchPost(appState);
+}
+
+function flickerAlertWindow(updatePostBody) {
+    const alertWindow = document.createElement('div')
+    alertWindow.className = 'alert-container'
+    alertWindow.innerHTML = `
+        <div class="alert-message_updating">Post Updating...</div>
+    `
+    elements.appContainer.appendChild(alertWindow);
+
+    setTimeout(() => {
+        elements.appContainer.removeChild(alertWindow);
+        if (appState.postUpdate.error) {
+            alertWindow.innerHTML = `
+            <div class="alert-message_error">${appState.postUpdate.error}</div>
+            `
+            elements.appContainer.appendChild(alertWindow);
+            updatePostBody(appState.modalWindow.originalPost.body);
+            render();
+        }
+
+        setTimeout(() => {
+            if (elements.appContainer.contains(alertWindow)) {
+                elements.appContainer.removeChild(alertWindow);
+                render();
+            }
+        }, 5000);
+    }, 5000);
 }
 
 function addAndRemoveListeners() {
     elements.postNavigationContainer.removeEventListener('click', handeClickPostsNavigation);
     elements.searchInput.removeEventListener('input', handeInputSearchInput);
     elements.postsContainer.removeEventListener('click', handleClickPosts);
+    elements.modalWindow && elements.modalWindow.removeEventListener('click', handleClickModalWindow);
+
+    elements.modalWindow = document.getElementById('modal-back');
+    elements.textareaEditedValue = document.getElementById('modal-window-edited-post__edited-text');
 
     elements.postNavigationContainer.addEventListener('click', handeClickPostsNavigation);
     elements.searchInput.addEventListener('input', handeInputSearchInput);
-    elements.postsContainer.addEventListener('click', handleClickPosts, { capture: true });
+    elements.postsContainer.addEventListener('click', handleClickPosts);
+    elements.modalWindow && elements.modalWindow.addEventListener('click', handleClickModalWindow);
 }
 
 async function initializePage() {
