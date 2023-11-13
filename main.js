@@ -5,6 +5,7 @@ import config from './config.json' assert { type: 'json' };
 import { getCurrentPostsState } from './utils/getCurrentPostsState.js';
 import { addScreenLoader, createScreenLoader, removeScreenLoader } from './utils/screenLoader.js';
 import { createPostModal } from './utils/createPostModal.js';
+import { createAlert } from './utils/createAlert.js';
 
 // APP STATE
 const appState = {
@@ -134,14 +135,38 @@ function renderPostNavigation() {
     elements.pageNumber.innerText = appState.currentPage;
 }
 function renderModalWindow() {
+    const previousModalWindowElement = document.querySelectorAll('#modal-back');
+
+    if (previousModalWindowElement.length) {
+        previousModalWindowElement.remove();
+    }
     const modalWindowElement = createPostModal(appState.modalWindow.editedPost);
 
     elements.appContainer.appendChild(modalWindowElement);
+}
+
+function renderAlert(renderOptions) {
+    const alertWindow = createAlert(renderOptions);
+
+    const someAlertElement = document.getElementById('alert-container');
+    if (someAlertElement) {
+        someAlertElement.remove();
+    }
+    elements.appContainer.appendChild(alertWindow);
+
+    setTimeout(() => alertWindow.remove(), 5000)
 }
 function render() {
     if (appState.modalWindow.isOpen) {
         renderModalWindow();
         return;
+    }
+
+    if (appState.postUpdate.isFetching) {
+        renderAlert({ isInfoMessage: true });
+    }
+    if (appState.postUpdate.error) {
+        renderAlert({ isErrorMessage: true, errorMessageText: appState.postUpdate.error });
     }
 
     elements.modalWindow && elements.modalWindow.remove();
@@ -161,10 +186,15 @@ async function onConfirm() {
     appState.modalWindow.editedPost.body = elements.textareaEditedValue && elements.textareaEditedValue.value;
     appState.modalWindow.isOpen = false;
     updatePostBody(appState.modalWindow.editedPost.body);
+
+    appState.postUpdate.isFetching = true;
     render();
 
-    flickerAlertWindow(updatePostBody);
     await patchPost(appState);
+    if (appState.postUpdate.error) {
+        updatePostBody(appState.modalWindow.originalPost.body);
+    }
+    render();
 }
 
 function flickerAlertWindow(updatePostBody) {
@@ -259,3 +289,15 @@ async function initializePage() {
 
 // RUN APP
 initializePage();
+
+
+// let prevAppState = appState;
+// setInterval(() => {
+//     const isEqual = deepEqual(prevAppState, appState);
+//     if (!isEqual) {
+//         appContainer.innerHTML = 'layout';
+//         // add eventlisteners
+//
+//         prevAppState = appState;
+//     }
+// }, 10);
