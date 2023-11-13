@@ -197,34 +197,6 @@ async function onConfirm() {
     render();
 }
 
-function flickerAlertWindow(updatePostBody) {
-    const alertWindow = document.createElement('div')
-    alertWindow.className = 'alert-container'
-    alertWindow.innerHTML = `
-        <div class="alert-message_updating">Post Updating...</div>
-    `
-    elements.appContainer.appendChild(alertWindow);
-
-    setTimeout(() => {
-        elements.appContainer.removeChild(alertWindow);
-        if (appState.postUpdate.error) {
-            alertWindow.innerHTML = `
-            <div class="alert-message_error">${appState.postUpdate.error}</div>
-            `
-            elements.appContainer.appendChild(alertWindow);
-            updatePostBody(appState.modalWindow.originalPost.body);
-            render();
-        }
-
-        setTimeout(() => {
-            if (elements.appContainer.contains(alertWindow)) {
-                elements.appContainer.removeChild(alertWindow);
-                render();
-            }
-        }, 5000);
-    }, 5000);
-}
-
 function addAndRemoveListeners() {
     elements.postNavigationContainer.removeEventListener('click', handeClickPostsNavigation);
     elements.searchInput.removeEventListener('input', handeInputSearchInput);
